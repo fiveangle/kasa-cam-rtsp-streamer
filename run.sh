@@ -7,7 +7,6 @@ publish_stream () {
     curl "$APP_CAM_URL" -k --ignore-content-length \
         --output - | \
     ffmpeg -y -i - \
-        -s 1920x1080 \
         -c:v copy -c:a copy \
         -f rtsp -rtsp_transport tcp "$APP_RTSP_URL"
 }
