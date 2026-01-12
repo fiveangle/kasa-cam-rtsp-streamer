@@ -4,10 +4,13 @@ echo " URL: $APP_CAM_URL"
 echo " OUT: $APP_RTSP_URL"
 
 publish_stream () {
+    pkill -f ffmpeg 2>/dev/null || true
+    sleep 1
+    pkill -f curl 2>/dev/null || true
+    sleep 1
     curl "$APP_CAM_URL" -k --ignore-content-length \
         --output - | \
-    ffmpeg -y -i - \
-        -s 1920x1080 \
+    ffmpeg -y -fflags +genpts -avoid_negative_ts make_zero -i - \
         -c:v copy -c:a copy \
         -f rtsp -rtsp_transport tcp "$APP_RTSP_URL"
 }
