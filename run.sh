@@ -6,8 +6,19 @@ echo " OUT: $APP_RTSP_URL"
 publish_stream () {
     curl "$APP_CAM_URL" -k --ignore-content-length \
         --output - | \
-    ffmpeg -y -i - \
-        -c:v copy -c:a copy \
+    ffmpeg \
+        -loglevel error \
+        -nostats \
+        -hide_banner \
+        -use_wallclock_as_timestamps 1 \
+        -y \
+        -fflags \
+            +discardcorrupt \
+        -i - \
+        -c:v copy \
+        -avoid_negative_ts make_zero \
+        -max_delay 0 \
+        -muxdelay 0 \
         -f rtsp -rtsp_transport tcp "$APP_RTSP_URL"
 }
 
